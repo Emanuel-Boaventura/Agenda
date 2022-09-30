@@ -4,7 +4,7 @@
 
 > Project built from Luiz Otávio Miranda's Udemy course
 
-[🔗 Click here to access](https://emanuel-boaventura.github.io/agenda/)
+In the future I will put a link to access
 
 ## 🛠 Techs
 
