@@ -17,7 +17,7 @@ class Login {
   }
 
   async login() {
-    this.valida();
+    this.validaLogin();
     if (this.errors.length > 0) return;
     this.user = await LoginModel.findOne({ email: this.body.email });
 
@@ -45,6 +45,18 @@ class Login {
     this.body.password = bcryptjs.hashSync(this.body.password, salt);
 
     this.user = await LoginModel.create(this.body);
+  }
+
+  validaLogin() {
+    this.cleanUP;
+
+    if (!validator.isEmail(this.body.email)) {
+      this.errors.push("E-mail inválido.");
+    }
+
+    if (this.body.password.length < 3) {
+      this.errors.push("Senha inválida.");
+    }
   }
 
   async userExist() {

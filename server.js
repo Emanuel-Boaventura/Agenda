@@ -1,22 +1,11 @@
-require("dotenv").config();
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
-mongoose
-  .connect(process.env.CONNECTIONSTRING, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Successful database connection");
-    app.emit("pronto");
-  })
-  .catch((e) => console.log(e));
+const env = require("./env");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const routes = require("./routes");
-const path = require("path");
+const path = require("node:path");
 const helmet = require("helmet");
 const csrf = require("csurf");
 const {
@@ -25,15 +14,40 @@ const {
   csrfMiddleware,
 } = require("./src/middlewares/middleware");
 
-app.use(helmet());
+mongoose
+  .connect(env.CONNECTIONSTRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .then(() => {
+    console.log("Successful database connection");
+    app.emit("pronto");
+  })
+  .catch((e) => console.log(e));
+const app = express();
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+        "style-src": ["'self'", "cdn.jsdelivr.net"],
+        "img-src": ["'self'", "data:"],
+      },
+    },
+  })
+);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, "public")));
 
 const sessionOptions = session({
-  secret: "akasdfj0út23453456+54qt23qv  qwf qwer qwer qewr asdasdasda a6()",
-  store: MongoStore.create({ mongoUrl: process.env.CONNECTIONSTRING }),
+  secret: env.SESSION_SECRET,
+  store: MongoStore.create({ mongoUrl: env.CONNECTIONSTRING }),
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -48,6 +62,7 @@ app.set("views", path.resolve(__dirname, "src", "views"));
 app.set("view engine", "ejs");
 
 app.use(csrf());
+
 // Nossos próprios middlewares
 app.use(middlewareGlobal);
 app.use(checkCsrfError);
