@@ -1,15 +1,13 @@
 const Contato = require("../models/ContatoModel");
 
 exports.index = (req, res) => {
-  res.render("contato", {
-    contato: {},
-  });
+  res.render("contato");
 };
 
 exports.register = async (req, res) => {
   try {
     const contato = new Contato(req.body);
-    await contato.register();
+    await contato.addContact(req.session.user._id);
 
     if (contato.errors.length > 0) {
       req.flash("errors", contato.errors);
@@ -18,9 +16,8 @@ exports.register = async (req, res) => {
     }
 
     req.flash("success", "Contato cadastrado com sucesso!");
-    req.session.save(() =>
-      res.redirect(`/contato/index/${contato.contato._id}`)
-    );
+    req.session.user = contato.user;
+    req.session.save(() => res.redirect(`/index/${req.session.user._id}`));
     return;
   } catch (e) {
     console.log(e);
@@ -29,21 +26,19 @@ exports.register = async (req, res) => {
 };
 
 exports.editIndex = async function (req, res) {
-  if (!req.params.id) return res.render("404");
-
-  const contato = await Contato.buscaPorId(req.params.id);
-
-  if (!contato) return res.render("404");
-
-  res.render("contato", { contato });
+  try {
+    const contato = req.session.user.contatos[req.params.index];
+    res.render("contato", { contato });
+  } catch {
+    console.log(e);
+    return res.render("404");
+  }
 };
 
 exports.edit = async function (req, res) {
   try {
-    if (!req.params.id) return res.render("404");
     const contato = new Contato(req.body);
-
-    await contato.edit(req.params.id);
+    await contato.editaContato(req.params.index);
 
     if (contato.errors.length > 0) {
       req.flash("errors", contato.errors);
@@ -52,7 +47,11 @@ exports.edit = async function (req, res) {
     }
 
     req.flash("success", "Contato editado com sucesso!");
+
+    req.session.user = contato.user;
+
     req.session.save(() => res.redirect(`/contato/index/${req.params.id}`));
+
     return;
   } catch (e) {
     console.log(e);

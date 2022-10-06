@@ -8,20 +8,21 @@
       <h1 class="text-center">Agenda</h1>
       <p class="text-center lead">Seus contatos estão abaixo</p>
 
-      <%- include('includes/messages'); %> <% if(contatos.length > 0) { %>
+      <%- include('includes/messages'); %> <% if(userDates.contatos.length > 0)
+      { %>
       <div class="responsive-trable">
         <table class="table my-3">
-          <% contatos.forEach(contato => { %>
+          <% userDates.contatos.forEach((contato, index) => { %>
           <tr>
             <td><%= contato.nome %></td>
             <td><%= contato.sobrenome %></td>
             <td><%= contato.telefone %></td>
             <td><%= contato.email %></td>
             <td>
-              <a href="/contato/index/<%= contato._id %> ">Editar</a>
+              <a href="/contato/index/<%= index %> ">Editar</a>
             </td>
             <td>
-              <a class="text-danger" href="/contato/delete/<%= contato._id %> "
+              <a class="text-danger" href="/contato/delete/<%= index %> "
                 >Excluir</a
               >
             </td>

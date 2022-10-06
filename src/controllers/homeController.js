@@ -1,7 +1,9 @@
-const Contato = require("../models/ContatoModel");
-
 exports.index = async (req, res) => {
-  const contatos = await Contato.buscaContatos();
+  const userDates = req.session.user;
+  res.render("index", { userDates });
+};
 
-  res.render("index", { contatos });
+exports.home = async (req, res) => {
+  if (req.session.user) return res.redirect(`/index/${req.session.user._id}`);
+  return res.render("home");
 };

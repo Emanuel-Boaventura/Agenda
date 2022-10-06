@@ -1,0 +1,38 @@
+<%- include('includes/head'); %> <%- include('includes/nav'); %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-2"></div>
+
+    <div class="col-lg-8 my-3">
+      <h1 class="text-center">Agenda</h1>
+      <p class="text-center lead">Seus contatos estão abaixo</p>
+
+      <%- include('includes/messages'); %>
+
+      <div class="responsive-trable">
+        <table class="table my-3">
+          <tr>
+            <td>Exemplo</td>
+            <td>Exemplinho</td>
+            <td>65 991234567</td>
+            <td>exemplinho@exemplo.com</td>
+            <td>
+              <a href="/contato/index">Editar</a>
+            </td>
+            <td>
+              <a class="text-danger" href="/contato/delete/<%= 0 %>">Excluir</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p class="text-center lead">
+        Gostaria de criar a sua propria agenda? É só criar uma conta!
+      </p>
+    </div>
+
+    <div class="col-lg-2"></div>
+  </div>
+</div>
+
+<%- include('includes/footer'); %>

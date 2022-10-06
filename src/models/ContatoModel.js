@@ -1,91 +1,49 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const { UserSchema } = require("./LoginModel");
 
-const ContatoSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  sobrenome: { type: String, required: false, default: "" },
-  telefone: { type: String, required: false, default: "" },
-  email: { type: String, required: false, default: "" },
-  criadoEm: { type: Date, default: Date.now },
-});
+const UserModel = mongoose.model("user", UserSchema);
 
-const ContatoModel = mongoose.model("Contato", ContatoSchema);
-
-function Contato(body) {
-  this.body = body;
-  this.errors = [];
-  this.contato = null;
-}
-
-Contato.prototype.register = async function () {
-  this.valida();
-
-  if (this.errors.length > 0) return;
-
-  this.contato = await ContatoModel.create(this.body);
-};
-
-Contato.prototype.valida = function () {
-  this.cleanUP;
-
-  if (this.body.email && !validator.isEmail(this.body.email)) {
-    this.errors.push("E-mail inválido.");
+class Contato {
+  constructor(body) {
+    this.body = body;
+    this.errors = [];
+    this.user = null;
   }
 
-  if (!this.body.nome) {
-    this.errors.push("Nome é um campo obrigatório.");
-  }
-
-  if (!this.body.email && !this.body.telefone) {
-    this.errors.push(
-      "Pelo menos um campo deve ser preenchido: e-mail ou telefone."
+  async addContact(id) {
+    this.valida();
+    this.user = await UserModel.findByIdAndUpdate(
+      id,
+      {
+        $push: { contatos: this.body },
+      },
+      { new: true }
     );
   }
-};
 
-Contato.prototype.cleanUP = function () {
-  for (const key in this.body) {
-    if (typeof this.body[key] !== "string") {
-      this.body[key] = "";
-    }
+  async editaContato(idContato) {
+    this.valida();
+    console.log("passei aqui1", idContato);
+    this.user = await UserModel.findByIdAndUpdate(
+      idContato,
+      {
+        $set: { contatos: this.body },
+      },
+      { new: true }
+    );
+    console.log(this.user);
   }
 
-  this.body = {
-    nome: this.body.nome,
-    sobrenome: this.body.sobrenome,
-    email: this.body.email,
-    telefone: this.body.telefone,
-  };
-};
+  valida() {
+    console.log("Validação ainda não criada!");
+  }
 
-Contato.prototype.edit = async function (id) {
-  if (typeof id !== "string") return;
-
-  this.valida();
-  if (this.errors.length > 0) return;
-
-  this.contato = await ContatoModel.findByIdAndUpdate(id, this.body, {
-    new: true,
-  });
-};
-
-//METODOS ESTATICOS
-Contato.buscaPorId = async function (id) {
-  if (typeof id !== "string") return;
-  const contato = await ContatoModel.findById(id);
-  return contato;
-};
-
-Contato.buscaContatos = async function () {
-  const contatos = await ContatoModel.find().sort({ criadoEm: -1 });
-  return contatos;
-};
-
-Contato.delete = async function (id) {
-  if (typeof id !== "string") return;
-
-  const contato = await ContatoModel.findOneAndDelete({ _id: id });
-  return contato;
-};
+  async buscaPorId(id) {
+    if (typeof id !== "string") return;
+    const contato = await UserModel.findById(id);
+    return contato;
+  }
+}
 
 module.exports = Contato;
