@@ -1,10 +1,13 @@
 require("dotenv").config();
 
-const CONNECTIONSTRING = process.env.CONNECTIONSTRING;
+const MONGODB_CONNECT_URL = process.env.MONGODB_CONNECT_URL;
 
 const SESSION_SECRET = process.env.SESSION_SECRET;
 
+const PORT = Number(process.env.PORT) || 3000;
+
 module.exports = {
-  CONNECTIONSTRING,
+  MONGODB_CONNECT_URL,
   SESSION_SECRET,
+  PORT,
 };

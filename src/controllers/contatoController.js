@@ -1,12 +1,12 @@
-const Contato = require("../models/ContatoModel");
+const ContatoService = require("../services/ContatoService");
 
 exports.index = (req, res) => {
-  res.render("contato");
+  res.render("contato", { contato: null });
 };
 
 exports.register = async (req, res) => {
   try {
-    const contato = new Contato(req.body);
+    const contato = new ContatoService(req.body);
     await contato.addContact(req.session.user._id);
 
     if (contato.errors.length > 0) {
@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
 
     req.flash("success", "Contato cadastrado com sucesso!");
     req.session.user = contato.user;
-    req.session.save(() => res.redirect(`/index/${req.session.user._id}`));
+    req.session.save(() => res.redirect("/"));
     return;
   } catch (e) {
     console.log(e);
@@ -37,12 +37,12 @@ exports.editIndex = async function (req, res) {
 
 exports.edit = async function (req, res) {
   try {
-    const contato = new Contato(req.body);
-    await contato.editaContato(req.params.index);
+    const contato = new ContatoService(req.body);
+    await contato.editaContato(req.session.user._id, req.params.id);
 
     if (contato.errors.length > 0) {
       req.flash("errors", contato.errors);
-      req.session.save(() => res.redirect(`/contato/index/${req.params.id}`));
+      req.session.save(() => res.redirect(`/contato/${req.params.id}`));
       return;
     }
 
@@ -50,7 +50,7 @@ exports.edit = async function (req, res) {
 
     req.session.user = contato.user;
 
-    req.session.save(() => res.redirect(`/contato/index/${req.params.id}`));
+    req.session.save(() => res.redirect(`/contato/${req.params.id}`));
 
     return;
   } catch (e) {
