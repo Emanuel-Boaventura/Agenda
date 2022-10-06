@@ -1,4 +1,5 @@
-<%- include('includes/head'); %> <%- include('includes/nav'); %>
+<%- include('includes/head'); %>
+<%- include('includes/nav'); %>
 
 <div class="container">
   <div class="row">
@@ -11,26 +12,26 @@
       <%- include('includes/messages'); %>
 
       <% if(contato) { %>
-        <form action="/contato/edit/<%= contato._id %> " method="POST">
+        <form action="/contato/edit/<%= contato._id %>" method="post">
         <% } else { %>
           <form action="/contato/register" method="POST">
       <% } %>  
         <input type="hidden" name="_csrf" value=<%= csrfToken %>>
         <div class="form-group">
           <label>Nome:</label>
-          <input value="<%= contato.nome %>" type="text" class="form-control" name="nome" />
+          <input value="<%= contato?.nome %>" type="text" class="form-control" name="nome" />
         </div>
         <div class="form-group">
           <label>Sobrenome:</label>
-          <input value="<%= contato.sobrenome %>" type="text" class="form-control" name="sobrenome" />
+          <input value="<%= contato?.sobrenome %>" type="text" class="form-control" name="sobrenome" />
         </div>
         <div class="form-group">
           <label>Telefone:</label>
-          <input value="<%= contato.telefone %>" type="tel" class="form-control" name="telefone" />
+          <input value="<%= contato?.telefone %>" type="tel" class="form-control" name="telefone" />
         </div>
         <div class="form-group">
           <label>E-mail:</label>
-          <input value="<%= contato.email %>" type="email" class="form-control" name="email" />
+          <input value="<%= contato?.email %>" type="email" class="form-control" name="email" />
         </div>
         <button type="submit" class="btn btn-primary">Salvar</button>
       </form>

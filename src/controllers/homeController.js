@@ -4,6 +4,9 @@ exports.index = async (req, res) => {
 };
 
 exports.home = async (req, res) => {
-  if (req.session.user) return res.redirect(`/index/${req.session.user._id}`);
+  if (req.session.user) {
+    return res.redirect("/");
+  }
+
   return res.render("home");
 };

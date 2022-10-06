@@ -13,9 +13,10 @@ const {
   checkCsrfError,
   csrfMiddleware,
 } = require("./src/middlewares/middleware");
+const { exit } = require("node:process");
 
 mongoose
-  .connect(env.CONNECTIONSTRING, {
+  .connect(env.MONGODB_CONNECT_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -24,7 +25,10 @@ mongoose
     console.log("Successful database connection");
     app.emit("pronto");
   })
-  .catch((e) => console.log(e));
+  .catch((e) => {
+    console.error(e);
+    exit(-1);
+  });
 const app = express();
 
 app.use(
@@ -47,11 +51,11 @@ app.use(express.static(path.resolve(__dirname, "public")));
 
 const sessionOptions = session({
   secret: env.SESSION_SECRET,
-  store: MongoStore.create({ mongoUrl: env.CONNECTIONSTRING }),
+  store: MongoStore.create({ mongoUrl: env.MONGODB_CONNECT_URL }),
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 semana
     httpOnly: true,
   },
 });
@@ -64,14 +68,12 @@ app.set("view engine", "ejs");
 app.use(csrf());
 
 // Nossos próprios middlewares
-app.use(middlewareGlobal);
-app.use(checkCsrfError);
-app.use(csrfMiddleware);
+app.use(middlewareGlobal, checkCsrfError, csrfMiddleware);
 app.use(routes);
 
 app.on("pronto", () => {
-  app.listen(3000, () => {
-    console.log("Acessar http://localhost:3000");
-    console.log("Servidor executando na porta 3000");
+  app.listen(env.PORT, () => {
+    console.log(`Acessar http://localhost:${env.PORT}`);
+    console.log(`Servidor executando na porta ${env.PORT}`);
   });
 });

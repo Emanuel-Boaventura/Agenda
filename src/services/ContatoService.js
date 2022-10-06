@@ -1,10 +1,6 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const { UserSchema } = require("./LoginModel");
+const { UserModel } = require("../schemas/user");
 
-const UserModel = mongoose.model("user", UserSchema);
-
-class Contato {
+class ContatoService {
   constructor(body) {
     this.body = body;
     this.errors = [];
@@ -22,17 +18,15 @@ class Contato {
     );
   }
 
-  async editaContato(idContato) {
+  async editaContato(idUsuario, idContato) {
     this.valida();
-    console.log("passei aqui1", idContato);
-    this.user = await UserModel.findByIdAndUpdate(
-      idContato,
+    this.user = await UserModel.findOneAndUpdate(
+      { _id: idUsuario, "contatos._id": idContato },
       {
-        $set: { contatos: this.body },
+        $set: { "contatos.$": this.body },
       },
       { new: true }
     );
-    console.log(this.user);
   }
 
   valida() {
@@ -46,4 +40,4 @@ class Contato {
   }
 }
 
-module.exports = Contato;
+module.exports = ContatoService;
