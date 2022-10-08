@@ -1,6 +1,10 @@
 exports.index = async (req, res) => {
-  const userDates = req.session.user;
-  res.render("index", { userDates });
+  if (req.session.user) {
+    const userDates = req.session.user;
+    return res.render("index", { userDates });
+  }
+
+  return res.redirect("/home");
 };
 
 exports.home = async (req, res) => {
