@@ -16,14 +16,14 @@ exports.register = async (req, res) => {
     if (login.errors.length > 0) {
       req.flash("errors", login.errors);
       req.session.save(() => {
-        res.redirect("/login");
+        res.redirect("/auth");
       });
       return;
     }
 
     req.flash("success", "Sua conta foi criada com sucesso.");
     req.session.save(() => {
-      return res.redirect("/login");
+      return res.redirect("/auth");
     });
   } catch (e) {
     console.log(e);
@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
     if (login.errors.length > 0) {
       req.flash("errors", login.errors);
       req.session.save(() => {
-        return res.redirect("/login");
+        return res.redirect("/auth");
       });
       return;
     }

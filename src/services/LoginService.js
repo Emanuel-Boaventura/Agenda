@@ -19,7 +19,10 @@ class LoginService {
       return;
     }
 
-    const valido = await bcryptjs.compare(this.body.password, this.user.password)
+    const valido = await bcryptjs.compare(
+      this.body.password,
+      this.user.password
+    );
 
     if (!valido) {
       this.errors.push("Senha inválida.");

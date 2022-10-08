@@ -12,16 +12,16 @@ route.get("/home", homeController.home);
 route.get("/", homeController.index);
 
 // Rotas de Login
-route.get("/login", loginController.index);
-route.post("/login/register", loginController.register);
-route.post("/login/login", loginController.login);
-route.delete("/login/logout", loginController.logout);
+route.get("/auth", loginController.index);
+route.post("/register", loginController.register);
+route.post("/login", loginController.login);
+route.get("/logout", loginController.logout);
 
 //Rotas de Contato
-route.get("/contato", loginRequired, contatoController.index);
-route.post("/contato/register", loginRequired, contatoController.register);
-route.get("/contato/:index", loginRequired, contatoController.editIndex);
-route.post("/contato/edit/:id", loginRequired, contatoController.edit);
-route.delete("/contato/delete/:index", loginRequired, contatoController.delete);
+route.get("/criaContato", loginRequired, contatoController.index);
+route.get("/:id", loginRequired, contatoController.editIndex);
+route.post("/cadastraContato", loginRequired, contatoController.register);
+route.post("/edit/:id", loginRequired, contatoController.edit);
+route.get("/delete/:id", loginRequired, contatoController.delete);
 
 module.exports = route;
